@@ -4,4 +4,4 @@
 profile
 */*.bbprojectd
 
-*/build/
+build/*
