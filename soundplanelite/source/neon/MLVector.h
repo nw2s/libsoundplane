@@ -37,16 +37,7 @@ public:
     inline MLVec & operator*=(const MLVec& b) { val.v = vmulq_f32(val.v, b.val.v); return *this; }
 
     /* Parallel div available only on 64bit ARM??? */
-    inline MLVec & operator/=(const MLVec& b)
-        { val.f[0]/=b.val.f[0]; val.f[1]/=b.val.f[1]; val.f[2]/=b.val.f[2]; val.f[3]/=b.val.f[3];
-        return *this; }
-    /* SSE2NEON used:
-        FORCE_INLINE __m128 _mm_div_ps(__m128 a, __m128 b)
-        {
-            return vdivq_f32(a, b);
-        }
-
-    */
+    inline MLVec & operator/=(const MLVec& b) { val.v = vdivq_f32(val.v, b.val.v); return *this; }
 
     inline const MLVec operator-() const { return MLVec(vsubq_f32(vdupq_n_f32(0), val.v)); }
 
