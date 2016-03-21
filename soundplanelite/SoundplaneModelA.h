@@ -41,7 +41,7 @@ const int kSoundplaneAKeyHeight = 5;
 
 const int kSoundplaneAMaxZones = 150;
 
-// Soundplane A hardware
+/* Soundplane A hardware */
 const uint16_t kSoundplaneUSBVendor = 0x0451;
 const uint16_t kSoundplaneUSBProduct = 0x5100;
 const int kSoundplaneASampleRate = 125000;
@@ -55,7 +55,7 @@ const int kSoundplaneWidth = 64;
 const int kSoundplaneHeight = 8;
 const float kMaxFrameDiff = 8.0f;
 
-// Soundplane A USB firmware
+/* Soundplane A USB firmware */
 const int kSoundplaneANumEndpoints = 2;
 const int kSoundplaneAEndpointStartIdx = 1;
 const int kSoundplaneADataBitsPerTaxel = 12;
@@ -64,12 +64,14 @@ const int kSoundplaneAlternateSetting = 1;
 
 typedef struct
 {
+	
   unsigned char packedData[kSoundplaneAPackedDataSize];
   uint16_t seqNum;
   uint16_t padding;
+  
 } SoundplaneADataPacket; // 388 bytes
 
-// Soundplane A OSX client software
+/* Soundplane A OSX client software */
 const int kSoundplaneABuffersExp = 3;
 const int kSoundplaneABuffers = 1 << kSoundplaneABuffersExp;
 const int kSoundplaneABuffersMask = kSoundplaneABuffers - 1;
@@ -78,37 +80,40 @@ const int kSoundplaneANumIsochFrames = 20;
 const int kSoundplaneOutputBufFrames = 128;
 const int kSoundplaneStartupFrames = 50;
 
-// isoc frame data update rate in ms. see LowLatencyReadIsochPipeAsync docs in IOUSBLib.h.
+/* isoc frame data update rate in ms. see LowLatencyReadIsochPipeAsync docs in IOUSBLib.h. */
 const int kSoundplaneAUpdateFrequency = 1;
 
-// device name. someday, an array of these
-//
+/* device name. someday, an array of these */
 extern const char* kSoundplaneAName;
 
 extern const unsigned char kDefaultCarriers[kSoundplaneSensorWidth];
 
-// USB device requests and indexes
-//
+/* USB device requests and indexes */
 typedef enum
 {
-  kRequestStatus = 0,
-  kRequestMask = 1,
-  kRequestCarriers = 2
+
+	kRequestStatus = 0,
+	kRequestMask = 1,
+	kRequestCarriers = 2
+
 } MLSoundplaneUSBRequest;
 
 typedef enum
 {
-  kRequestCarriersIndex = 0,
-  kRequestMaskIndex = 1
+
+	kRequestCarriersIndex = 0,
+	kRequestMaskIndex = 1
+
 } MLSoundplaneUSBRequestIndex;
 
-// device states
-//
+/* device states */
 typedef enum
 {
-  kDevNoErr = 0,
-  kDevDataDiffTooLarge = 1,
-  kDevGapInSequence = 2
+	
+	kDevNoErr = 0,
+	kDevDataDiffTooLarge = 1,
+	kDevGapInSequence = 2
+		
 } MLSoundplaneErrorType;
 
 static constexpr int kSoundplaneOutputFrameLength = kSoundplaneWidth * kSoundplaneHeight;
@@ -118,4 +123,4 @@ void K1_clear_edges(SoundplaneOutputFrame& dest);
 float frameDiff(const SoundplaneOutputFrame& p0, const SoundplaneOutputFrame& p1);
 void dumpFrame(float* frame);
 
-#endif // __SOUNDPLANE_MODEL_A__
+#endif
