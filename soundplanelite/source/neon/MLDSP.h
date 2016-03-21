@@ -3,7 +3,7 @@
 
 #include "SSE2NEON.h"
 
-#define EXP_POLY_DEGREE 3
+ #define EXP_POLY_DEGREE 3
 
 #define POLY0(x, c0) _mm_set1_ps(c0)
 #define POLY1(x, c0, c1) _mm_add_ps(_mm_mul_ps(POLY0(x, c1), x), _mm_set1_ps(c0))
