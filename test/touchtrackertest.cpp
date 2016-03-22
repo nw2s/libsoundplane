@@ -10,10 +10,10 @@
 #include <iomanip>
 #include <string.h>
 
-#include "SoundplaneDriver.h"
-#include "SoundplaneModelA.h"
-#include "MLSignal.h"
-#include "TouchTracker.h"
+#include "../src/SoundplaneDriver.h"
+#include "../src/SoundplaneModelA.h"
+#include "../src/MLSignal.h"
+#include "../src/TouchTracker.h"
 
 namespace 
 {

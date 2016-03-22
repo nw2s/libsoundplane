@@ -74,9 +74,14 @@ $(BUILDDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT)
 	@sed -e 's/.*://' -e 's/\\$$//' < $(BUILDDIR)/$*.$(DEPEXT).tmp | fmt -1 | sed -e 's/^ *//' -e 's/$$/:/' >> $(BUILDDIR)/$*.$(DEPEXT)
 	@rm -f $(BUILDDIR)/$*.$(DEPEXT).tmp
 
+# Install
+install: 
+	cp bin/libsoundplane.so /usr/local/lib/
+
 # Build test executable
 test: $(TARGET)
-	$(CC) -Wall -O3 -g -std=c++11 test/test.cpp -lsoundplane -o test-soundplane
+	$(CC) -O3 -g -std=c++11 test/soundplanetest.cpp -lsoundplane -o bin/test-soundplane
+	$(CC) -ftree-vectorize -mfloat-abi=hard -O3 -g -std=c++11 -march=native -mfpu=neon test/touchtrackertest.cpp -lsoundplane -o bin/test-tracker
 
 
 # Non-File Targets

@@ -7,8 +7,8 @@
 #include <iomanip>
 #include <string.h>
 
-#include <SoundplaneDriver.h>
-#include "SoundplaneModelA.h"
+#include "../src/SoundplaneDriver.h"
+#include "../src/SoundplaneModelA.h"
 //#include "MLSignal.h"
 
 namespace

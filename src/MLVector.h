@@ -10,14 +10,7 @@
 // of MLSignals would be too big. 
 
 #include "MLDSP.h"
-
-#if defined(ML_USE_SSE)
-    #include "source/sse/MLVector.h"
-#elif defined(ML_USE_NEON)
-    #include "source/neon/MLVector.h"
-#else 
-    #include "source/nofpu/MLVector.h"
-#endif
+#include "neon/MLVector.h"
 
 
 class Vec2 : public MLVec 
