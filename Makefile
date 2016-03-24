@@ -32,7 +32,7 @@ OBJEXT := o
 #Flags, Libraries and Includes
 CFLAGS      := -Wno-unknown-pragmas -ftree-vectorize -mfloat-abi=hard -O3 -g -std=c++11 -fPIC -march=native -mfpu=neon
 LIB         := -lusb-1.0 -lpthread -latomic
-INC         := -I$(INCDIR) -I/usr/local/include -I/usr/include/libusb-1.0/
+INC         := -I$(INCDIR) -I/usr/include/python2.7 -I/usr/local/include -I/usr/include/libusb-1.0 
 INCDEP      := -I$(INCDIR)
 
 #---------------------------------------------------------------------------------
@@ -57,6 +57,10 @@ cleaner: clean
 
 # Pull in dependency info for *existing* .o files
 -include $(OBJECTS:.$(OBJEXT)=.$(DEPEXT))
+
+# Cython
+cython:
+	cython --cplus -o src/python/libsoundplane.cpp src/python/libsoundplane.pyx
 
 # Link
 $(TARGET): $(OBJECTS)
