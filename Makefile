@@ -31,7 +31,7 @@ OBJEXT := o
 
 #Flags, Libraries and Includes
 CFLAGS      := -Wno-unknown-pragmas -ftree-vectorize -mfloat-abi=hard -O3 -g -std=c++11 -fPIC -march=native -mfpu=neon
-LIB         := -lusb-1.0 -lpthread -latomic
+LIB         := -lusb-1.0 -lpthread -latomic -lpython2.7 -lboost_python -lboost_system
 INC         := -I$(INCDIR) -I/usr/include/python2.7 -I/usr/local/include -I/usr/include/libusb-1.0 
 INCDEP      := -I$(INCDIR)
 
