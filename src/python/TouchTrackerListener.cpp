@@ -100,7 +100,7 @@ void TouchTrackerListener::receivedFrame(SoundplaneDriver& driver, const float* 
 }
 
 
-SoundplaneDriver* create(SoundplaneDriverListener *listener)
+SoundplaneDriver* createSoundplaneDriver(SoundplaneDriverListener *listener)
 {
 	return SoundplaneDriver::create(listener).get();
 }

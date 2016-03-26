@@ -37,6 +37,6 @@ class TouchTrackerListener : public SoundplaneDriverListener
 };
 
 
-SoundplaneDriver* create(SoundplaneDriverListener *listener);
+SoundplaneDriver* createSoundplaneDriver(SoundplaneDriverListener *listener);
 
 #endif
