@@ -95,6 +95,10 @@ LibusbSoundplaneDriver::LibusbSoundplaneDriver(SoundplaneDriverListener* listene
 	assert(listener);
 }
 
+LibusbSoundplaneDriver::LibusbSoundplaneDriver() : mState(kNoDevice), mQuitting(false), mListener(nullptr), mSetCarriersRequest(nullptr), mEnableCarriersRequest(nullptr)
+{
+}
+
 LibusbSoundplaneDriver::~LibusbSoundplaneDriver() noexcept(true)
 {
 	/* This causes getDeviceState to return kDeviceIsTerminating */

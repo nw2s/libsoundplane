@@ -22,6 +22,7 @@ class LibusbSoundplaneDriver : public SoundplaneDriver
 {
 public:
 	LibusbSoundplaneDriver(SoundplaneDriverListener* listener);
+	LibusbSoundplaneDriver();
 	~LibusbSoundplaneDriver() noexcept(true);
 
 	void init();
