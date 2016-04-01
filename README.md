@@ -1,29 +1,8 @@
-Soundplane lite library
 
+Based mostly on code from technobear and the original soundplane developers. I've simply wrapped a socket server around it and built a python parser to handle data. 
 
-building linux 
+To be integrated into the larger nw2s::b2/dsp operating system, but provided here in case someone might find it useful. 
 
-    mkdir build
-    cd build
-    cmake .. 
-
-Mac (with xcode)
-
-    mkdir build
-    cd build
-    cmake .. -GXcode 
-    xcodebuild -project mec.xcodeproj -target ALL_BUILD -configuration MinSizeRel
-
-
-
-Mac OSX 10.11 - Stopping apps
-becareful when stopping under El Capitan (MAC OSX 10.11) , abrutly stopping usb drivers will cause panic
-for mec use osc to terminate EVEN inside Xcode!
-
-    oscsend localhost 9000 /tb/mec/command s stop
-
-
-(there is also a Ctrl-C handler which will shutdown nicely)
 
 
 
