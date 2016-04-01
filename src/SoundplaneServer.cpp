@@ -1,4 +1,8 @@
 
+// Soundplaned socket server
+// Copyright (c) 2016 Thomas Scott Wilson http://nw2s.net
+// Distributed under the MIT license
+
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -31,8 +35,22 @@ namespace
 {
 	const int kMaxTouch = 4;
 
+	static bool noteOn[kMaxTouch];
+
 	static volatile int keepRunning = 1;
 		
+	/* 28 bytes */
+	struct touchdata
+	{
+		int index;
+		float x;
+		float y;
+		float z;
+		float dz;
+		float age;
+		float dt;
+	};
+
 
 	class TouchTrackerServer : public SoundplaneDriverListener
 	{
@@ -63,28 +81,9 @@ namespace
 
 		    virtual void deviceStateChanged(SoundplaneDriver& driver, MLSoundplaneState s) override 
 			{
-				//TODO: syslog all std::couts
-		        std::cout << "Device state changed: " << s << std::endl;
+				syslog(LOG_INFO, "Device state changed: %d\n", s);
 		    }
 	    
-			void dumpTouches() 
-			{
-		        std::cout << std::fixed << std::setw(6) << std::setprecision(4);
-	    
-			    for(int i=0; i<kMaxTouch; ++i)
-		        {
-		            std::cout << " x:" << mTouchFrame(xColumn, i);
-		            std::cout << " y:" << mTouchFrame(yColumn, i);
-		            std::cout << " z:" << mTouchFrame(zColumn, i);
-		            //cout << mTouchFrame(dzColumn, i);
-		            //cout << mTouchFrame(ageColumn, i;
-		            //cout << mTouchFrame(dtColumn, i);
-		            std::cout << " n:" << mTouchFrame(noteColumn, i);
-		            //cout << mTouchFrame(reservedColumn, i);
-		            std::cout << std::endl;
-		        }
-		    }
-
 		    virtual void receivedFrame(SoundplaneDriver& driver, const float* data, int size) override 
 			{
 		        if (!mHasCalibration)
@@ -92,11 +91,7 @@ namespace
 		            memcpy(mCalibration.getBuffer(), data, sizeof(float) * size);
 		            mHasCalibration = true;
 		            mTracker.setCalibration(mCalibration);
-		            std::cout << "calibration\n";
-		            mCalibration.dumpASCII(std::cout);
-		            std::cout << "============\n";
-				
-					// mTracker.setDefaultNormalizeMap(); // ?
+					syslog(LOG_INFO, "Set calibration\n");					
 		        }
 		        else 
 		        {
@@ -108,19 +103,29 @@ namespace
 		            mTracker.setOutputSignal(&mTouchFrame);
 		            mTracker.process(1);
 
-					// 		            if (mFrameCounter == 0)
-					// {
-					// 		                mTest.scale(100.f);
-					// 		                mTest.flipVertical();
-					// 		                mTest.dumpASCII(std::cout);
-					// 		                mTest.dump(std::cout);
-					// 		                dumpTouches();
-					// 		                std::cout << "\n";
-					// 		            }
 
+				    for (int i = 0; i < kMaxTouch; ++i)
+			        {
+						//TODO: Check for empty touches
+						
+						touchdata d;
+						
+						d.index = i;
+						d.x = mTouchFrame(xColumn, i);
+						d.y = mTouchFrame(yColumn, i);
+						d.z = mTouchFrame(zColumn, i);
+						d.dz = mTouchFrame(dzColumn, i);
+						d.age = mTouchFrame(ageColumn, i);
+						d.dt = mTouchFrame(dtColumn, i);
+						
+						int b = write(socketfd, &d, sizeof(d));
+						
+						if (b < sizeof(d))
+						{
+							syslog(LOG_ERR, "Error - short write");
+						}
+					}
 		        }
-
-		        // mFrameCounter = (mFrameCounter + 1) % 1000;
 		    }
 
 		private:
@@ -165,8 +170,7 @@ namespace
 		/* Create the socket */
 		if ((fd = socket(AF_LOCAL, SOCK_STREAM, 0)) == -1) 
 		{
-			//TODO: syslog
-			perror("socket error");
+			syslog(LOG_ERR, "Socket error\n");
 			exit(-1);
 		}
 
@@ -182,25 +186,25 @@ namespace
 		/* Bind to the address */
 		if (bind(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) 
 		{
-			perror("bind error");
+			syslog(LOG_ERR, "Socket error (bind)\n");
 			exit(-1);
 		}
 
 		/* Indicate that we'll be listening */
 		if (listen(fd, 1) == -1) 
 		{
-			perror("listen error");
+			syslog(LOG_ERR, "Socket error (listen)\n");
 			exit(-1);
 		}
 
 		/* Wait for a connection */
 		if ( (cl = accept(fd, NULL, NULL)) == -1)
 		{
-			perror("accept error");
+			syslog(LOG_ERR, "Socket error (accept): %d\n", cl);
 			exit(-1);
 		}
 		
-		return fd;
+		return cl;
 	}
 	
 	void cleanupSocket(int fd)
@@ -218,8 +222,15 @@ int main(int argc, const char * argv[])
 	openlog ("soundplaned", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
 	syslog(LOG_INFO, "Initializing soundplane server\n");	
 	
+	/* Initialize local state */
+	for (int i = 0; i < kMaxTouch; i++)
+	{
+		noteOn[i] = false;
+	}
+	
 	/* Set up the interrupt handler so we can exit cleanly */
     signal(SIGINT, intHandler);
+	signal(SIGPIPE, intHandler);
 
 	/* Listen on a socket until someone connects */
 	int socketfd = initSocket();
@@ -229,7 +240,6 @@ int main(int argc, const char * argv[])
 
     auto driver = SoundplaneDriver::create(&listener);
 
-	//TODO: syslog
     syslog(LOG_INFO, "Initial device state: %d\n", driver->getDeviceState());
 
     while(keepRunning) 
